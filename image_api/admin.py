@@ -1,0 +1,21 @@
+from django.contrib import admin
+
+from .models import Image, ImageSize, ImageContainer, Tier, UserTier
+
+
+
+
+class TierAdmin(admin.ModelAdmin):
+    list_display = ["name", "originalLink", "expiringLink"]
+
+class UserTierAdmin(admin.ModelAdmin):
+    list_display = ["user", "tier"]
+
+class ImageSizesAdmin(admin.ModelAdmin):
+    list_display = ["tier", "height"]
+
+admin.site.register(Tier, TierAdmin)
+admin.site.register(UserTier, UserTierAdmin)
+admin.site.register(ImageSize, ImageSizesAdmin)
+admin.site.register(Image)
+admin.site.register(ImageContainer)
