@@ -21,16 +21,16 @@ http://127.0.0.1:8000/login \
 Returns auth token
 3. Images listning:\
 http://127.0.0.1:8000/images \
-Authorization Token YOURTOKENSTRING\
+HEADER: Authorization Token YOURTOKENSTRING\
 Returns list of images with links for sharing
 4. Image upload:\
 http://127.0.0.1:8000/upload \
-Authorization Token YOURTOKENSTRING\
+HEADER: Authorization Token YOURTOKENSTRING\
 {"image": YOURIMAGEFILE}\
 Returns image links for sharing
 5. Generate expiring link:\
 http://127.0.0.1:8000/share/<original_link>/<expiration_time_seconds> \
-Authorization Token YOURTOKENSTRING\
+HEADER: Authorization Token YOURTOKENSTRING\
 Returns link to image of choice, in size of choice, working for the time of choice. Link will be now visible in images links, untill someone opens it after time expires.
 6. CRUD for user tiers and tiers capabilities in admin panel.
 
