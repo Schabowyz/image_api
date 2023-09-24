@@ -12,7 +12,7 @@ from rest_framework.permissions import IsAuthenticated
 
 import datetime
 
-from .models import ImageContainer, ImageLink
+from .models import ImageContainer, ImageLink, UserTier
 from .serializers import UserSerializer, ImageContainerSerializer
 
 
@@ -69,6 +69,9 @@ def render_image(request, image_link):
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def generate_expiring_link(request, image_link, expiration_time_seconds):
+
+    if UserTier.objects.get(user=request.user).tier.expiringLink == False:
+        return Response({"error": "insufficent rights, please upgrade account tier to do that"})
 
     if expiration_time_seconds < 300 or expiration_time_seconds > 30000:
         return Response({"error": "expiration time must be between 300 and 30000 seconds"})

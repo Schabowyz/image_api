@@ -44,9 +44,11 @@ class ImageSize(models.Model):
         return self.tier.name
     
 
+# Container for original image, resized versions and links to them
 class ImageContainer(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
+    # Generates separate images based of original image, resized to heights based on user Tier. Then generates link objects to those images
     def save_images_and_links(self, image_file):
         og_image = Image(
             container = self,
@@ -77,6 +79,7 @@ class ImageContainer(models.Model):
             )
             new_link.save()
 
+    # Returns dictionaries with links for image browesing
     @property
     def images_urls(self):
         urls = {"permament": {}, "temporary": {}}
