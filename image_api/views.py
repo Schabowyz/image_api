@@ -59,7 +59,8 @@ def upload_image(request):
     except:
         return Response("Image not provided")
     serializer = ImageContainerSerializer(instance=image_container)
-    return Response({"image": serializer.data})
+    return Response({"info": "to generate expiring link, use one of original links and add '/TIMEINSECONDS' after. Value must be between 300 and 30000",
+                     "image": serializer.data})
 
 
 # Checks wether link is permament or temporary and deletes it if its outdated
@@ -82,7 +83,7 @@ def generate_expiring_link(request, image_link, expiration_time_seconds):
     if UserTier.objects.get(user=request.user).tier.expiringLink == False:
         return Response({"error": "insufficent rights, please upgrade account tier to do that"})
 
-    if expiration_time_seconds < 300 or expiration_time_seconds > 30000:
+    if int(expiration_time_seconds) < 300 or int(expiration_time_seconds) > 30000:
         return Response({"error": "expiration time must be between 300 and 30000 seconds"})
 
     expiring_link = ImageLink.generate_expiring_link(image_link, expiration_time_seconds)

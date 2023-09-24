@@ -50,15 +50,16 @@ class ImageContainer(models.Model):
 
     # Generates separate images based of original image, resized to heights based on user Tier. Then generates link objects to those images
     def save_images_and_links(self, image_file):
-        og_image = Image(
-            container = self,
-            image = image_file
-        )
-        og_image.save()
-        og_link = ImageLink(
-            image = og_image,
-        )
-        og_link.save()
+        if UserTier.objects.get(user=self.user).tier.originalLink == True:
+            og_image = Image(
+                container = self,
+                image = image_file
+            )
+            og_image.save()
+            og_link = ImageLink(
+                image = og_image,
+            )
+            og_link.save()
 
         possible_heights = ImageSize.objects.filter(tier=UserTier.objects.get(user=self.user).tier)
         for height in possible_heights:

@@ -20,6 +20,7 @@ admin.site.register(ImageSize, ImageSizesAdmin)
 admin.site.register(ImageLink, ImageLinkAdmin)
 admin.site.register(Tier, TierAdmin)
 admin.site.register(Image)
+admin.site.register(ImageContainer)
 
 
 
