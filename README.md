@@ -17,22 +17,26 @@ Application was created as a recruitment task. It's purpose is to resize and sha
 1. Registration - you have to use admin panel in django to create new users. Credentials are login: admin, pw: admin. You can use any password when creating a user due to disabled validators.
 2. Log in:\
 http://127.0.0.1:8000/login \
+METHOD: POST\
 {"username": "YOURUSERNAME", "password": "YOURPASSWORD"}\
 Returns auth token
-3. Images listning:\
+4. Images listning:\
 http://127.0.0.1:8000/images \
+METHOD: GET\
 HEADER: Authorization Token YOURTOKENSTRING\
 Returns list of images with links for sharing
-4. Image upload:\
+6. Image upload:\
 http://127.0.0.1:8000/upload \
+METHOD: POST\
 HEADER: Authorization Token YOURTOKENSTRING\
 {"image": YOURIMAGEFILE}\
 Returns image links for sharing
-5. Generate expiring link:\
+8. Generate expiring link:\
 http://127.0.0.1:8000/share/<original_link>/<expiration_time_seconds> \
+METHOD: POST\
 HEADER: Authorization Token YOURTOKENSTRING\
 Returns link to image of choice, in size of choice, working for the time of choice. Link will be now visible in images links, untill someone opens it after time expires.
-6. CRUD for user tiers and tiers capabilities in admin panel.
+10. CRUD for user tiers and tier's rights in admin panel.
 
 ### Built in tiers/users
 There are few users and tiers for testing, their credentials are:
