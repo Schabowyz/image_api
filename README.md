@@ -9,9 +9,9 @@ Application was created as a recruitment task. It's purpose is to resize and sha
 ## Usage
 
 ### Startup
-1. Use a docker image to set up the project.
-2. Start application with manage.py runserver command.
-3. Once the app is running you can use any software to communicate with it. Personally I'm using Postman which I find very convinient.
+1. Clone the repository or download it to your hard drive.
+2. Open projects directory and run command "docker compose up --build"
+3. Once the app is running you can use any software to communicate with it. Personally I'm using Postman which I find very convinient. App should be running on http://127.0.0.1:8000
 
 ### Functions
 1. Registration - you have to use admin panel in django to create new users. Credentials are login: admin, pw: admin. You can use any password when creating a user due to disabled validators.
