@@ -24,6 +24,10 @@ urlpatterns = [
 
     path("upload", views.upload_image),
     path("images", views.user_images),
+    path("share/<image_link>/<expiration_time_seconds>", views.generate_expiring_link),
 
     path("share/<image_link>", views.render_image)
 ]
+
+
+# /<image_id>,/<image_height>/<expiration_time_seconds>

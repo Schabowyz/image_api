@@ -79,14 +79,21 @@ class ImageContainer(models.Model):
 
     @property
     def images_urls(self):
-        urls = {}
+        urls = {"permament": {}, "temporary": {}}
         images = Image.objects.filter(container=self)
         for image in images:
-            link = ImageLink.objects.get(image=image)
-            if link.height:
-                urls[link.height.height] = f"/share/{link.link}"
-            else:
-                urls["original"] = f"/share/{link.link}"
+            links = ImageLink.objects.filter(image=image)
+            for link in links:
+                if link.expiration_time == 0:
+                    if link.height:
+                        urls["permament"][link.height.height] = f"/share/{link.link}"
+                    else:
+                        urls["permament"]["original"] = f"/share/{link.link}"
+                else:
+                    if link.height:
+                        urls["temporary"][link.height.height] = f"/share/{link.link}"
+                    else:
+                        urls["temporary"]["original"] = f"/share/{link.link}"
         return urls
 
 
@@ -102,3 +109,26 @@ class ImageLink(models.Model):
     link = models.CharField(null=False, default=generate_link, max_length=128)
     expiration_time = models.IntegerField(default=0)
     created_time = models.DateTimeField(default=now, editable=False)
+
+    def generate_expiring_link(og_image_link, expiration_time_seconds):
+        og_image_link = ImageLink.objects.get(link=og_image_link)
+        existing_image_links = ImageLink.objects.filter(image=og_image_link.image)
+        try:
+            existing_image_links[1].delete()
+        except:
+            pass
+        expiring_image_link = ImageLink(
+            image = og_image_link.image,
+            height = og_image_link.height,
+            expiration_time = expiration_time_seconds
+        )
+        expiring_image_link.save()
+        linkObject = expiring_image_link
+        return linkObject
+
+    def delete_outdated_link(self):
+        self.delete()
+
+
+    def __str__ (self):
+        return f"{self.id} to {self.image}, expiration time: {self.expiration_time} from {self.created_time}"

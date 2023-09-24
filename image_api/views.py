@@ -1,5 +1,5 @@
 from django.contrib.auth.models import User
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.authtoken.models import Token
@@ -10,7 +10,9 @@ from rest_framework.authentication import SessionAuthentication, TokenAuthentica
 from rest_framework.decorators import authentication_classes, permission_classes
 from rest_framework.permissions import IsAuthenticated
 
-from .models import Image, ImageContainer, ImageLink, ImageSize, UserTier, Tier
+import datetime
+
+from .models import ImageContainer, ImageLink
 from .serializers import UserSerializer, ImageContainerSerializer
 
 
@@ -30,7 +32,9 @@ def login(request):
 def user_images(request):
     image_containers = ImageContainer.objects.filter(user=request.user)
     serializer = ImageContainerSerializer(image_containers, many = True, context = {"user": request.user.id})
-    return Response({"user": request.user.username, "images": serializer.data})
+    return Response({"user": request.user.username,
+                     "info": "to generate expiring link, use one of original links and add '/TIMEINSECONDS' after. Value must be between 300 and 30000",
+                     "images": serializer.data})
 
 
 @api_view(["POST"])
@@ -49,8 +53,28 @@ def upload_image(request):
     return Response({"image": serializer.data})
 
 
+# Checks wether link is permament or temporary and deletes it if its outdated
 def render_image(request, image_link):
-    image = get_object_or_404(ImageLink, link=image_link).image.image
-    return HttpResponse(image, content_type="image/png")
+    link = get_object_or_404(ImageLink, link=image_link)
+    if link.expiration_time != 0:
+        created_time = link.created_time.replace(tzinfo=None)
+        timediff = datetime.datetime.now() - created_time
+        if timediff.total_seconds() > link.expiration_time:
+            link.delete_outdated_link()
+            return JsonResponse({"404": "outdated link"}, status=404)
+    return HttpResponse(link.image.image, content_type="image/png")
 
 
+@api_view(["POST"])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def generate_expiring_link(request, image_link, expiration_time_seconds):
+
+    if expiration_time_seconds < 300 or expiration_time_seconds > 30000:
+        return Response({"error": "expiration time must be between 300 and 30000 seconds"})
+
+    expiring_link = ImageLink.generate_expiring_link(image_link, expiration_time_seconds)
+
+    image_container = expiring_link.image.container
+    serializer = ImageContainerSerializer(instance=image_container)
+    return Response({"image": serializer.data})
