@@ -16,6 +16,15 @@ from .models import ImageContainer, ImageLink, UserTier
 from .serializers import UserSerializer, ImageContainerSerializer
 
 
+@api_view(["GET"])
+def index(reqeust):
+    return Response({
+        "login - for auth token generation": "/login",
+        "user's images (requires auth token)": "/images",
+        "image upload (requires auth token)": "/upload"
+    })
+
+
 @api_view(["POST"])
 def login(request):
     user = get_object_or_404(User, username=request.data["username"])
