@@ -3,7 +3,7 @@
 
 ## Description
 
-Application was created as a recruitment task. It's purpose is to resize and share images uploaded by users.
+API for uploading and sharing images with specific abilities based on user's tiers. Created in order to learn DRF and as a recruitment task.
 
 
 ## Usage
